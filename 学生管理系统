@@ -1,0 +1,254 @@
+#define _CRT_SECURE_NO_WARNINGS
+#include<stdio.h>
+#include<stdlib.h>
+#include<string.h>
+struct student
+{
+	char name[50];
+	char sex[10];
+	int num;
+	int score;
+	struct student* next;
+};
+void manu()
+{
+	printf("--------------------------------------------------------------\n");
+	printf("|                       学生管理系统                         |\n");
+	printf("|-------------------------------------------------------------\n");
+	printf("|  1.导入学生信息                                            |\n");
+	printf("|  2.查找学生信息                                            |\n");
+	printf("|  3.修改学生信息                                            |\n");
+	printf("|  4.删除学生信息                                            |\n");
+	printf("|  5.打印学生信息                                            |\n");
+	printf("|  6.增加学生信息                                            |\n");
+	printf("|  7.结束并退出                                              |\n");
+	printf("--------------------------------------------------------------\n");
+	fflush(stdin);
+}
+struct student* creat()
+{
+	int i=0;
+	struct student* head = NULL;
+	struct student* next = NULL;
+	struct student* end = next = (struct student*)malloc(sizeof(struct student));
+	printf("请输入学生的姓名、性别、学号、成绩：\n");
+	printf("若想结束录入，请输入end\n");
+	scanf("%s", next->name);
+	if (strcmp(next->name, "end") == 0)
+	{
+		system("cls");
+		manu();
+		return head;
+	}
+	scanf("%s", next->sex);
+	scanf("%d", &next->num);
+	scanf("%d", &next->score);
+	i++;
+	while (strcmp(next->name, "end") == 1)
+	{
+		if (i == 1)
+		{
+			next->next = NULL;
+			end = next;
+			head = end;
+		}
+		else
+		{
+			next->next = NULL;
+			end->next = next;
+			end = next;
+		}
+		next = (struct student*)malloc(sizeof(struct student));
+		scanf("%s", next->name);
+		if (strcmp(next->name, "end") == 0)
+		{
+			break;
+		}
+		scanf("%s", next->sex);
+		scanf("%d", &next->num);
+		scanf("%d", &next->score);
+		i++;
+	}
+	system("cls");
+	manu();
+	return head;
+}
+void print(struct student*head)
+{
+	struct student* n = head;
+	while (n->next != NULL)
+	{
+		printf("姓名：%s\t性别：%s\n学号：%d\n成绩：%d\n", n->name, n->sex,n->num, n->score);
+		n = n->next;
+	}
+	printf("姓名：%s\n性别：%s\n学号：%d\n成绩：%d\n", n->name, n->sex, n->num, n->score);
+}
+void find(struct student* head)
+{
+	struct student* n = head;
+	int flag=1;
+	char name[15];
+	printf("请输入学生姓名：");
+	scanf("%s", &name);
+	while (n->next != NULL)
+	{
+		if (strcmp(name, n->name) == 0)
+		{
+			printf("姓名：%s\t性别：%s\t学号：%d\t成绩：%d\n", n->name, n->sex, n->num, n->score);
+			flag = 0;
+		}
+		n = n->next;
+	}
+	if (strcmp(name, n->name) == 0)
+	{
+		printf("姓名：%s\t性别：%s\t学号：%d\t成绩：%d\n", n->name, n->sex, n->num, n->score);
+		flag = 0;
+	}
+	if (flag == 1)
+	{
+		printf("没有此学生\n");
+	}
+}
+void change(struct student* head)
+{
+	struct student* n = head;
+	printf("请输入学生姓名：\n");
+	char name[20];
+	scanf("%s", &name);
+	int t,flag=0;
+	char fun[20];
+	while (n->next != NULL)
+	{
+		if (strcmp(name, n->name) == 0)
+		{
+			flag = 1;
+			break;
+		}
+		n = n->next;
+	}
+	char function[20];
+	if (strcmp(name, n->name) == 0)
+	{
+		printf("请输入要修改的部分：(name/sex/num/sore)\n");
+		scanf("%s", function);
+		if (strcmp(function, "name") == 0)
+		{
+			scanf("%s", n->name);
+		}
+		if (strcmp(function, "sex") == 0)
+		{
+			scanf("%s", n->sex);
+		}
+		if (strcmp(function, "num") == 0)
+		{
+			scanf("%d", &n->num);
+		}
+		if (strcmp(function, "sore") == 0)
+		{
+			scanf("%d", &n->score);
+		}
+		flag = 1;
+	}
+	if (flag == 0)
+	{
+		printf("error");
+	}
+}
+struct student* del(struct student* head)
+{
+	char name[15];
+	printf("请输入需要删除的学生姓名：\n");
+	scanf("%s", &name);
+	struct student* n = head;
+	int k=0; 
+	struct student* t = NULL;
+	while (n->next != NULL)
+	{
+		if (strcmp(name, n->next->name) == 0)
+		{
+			t = n->next;
+			n->next = n->next->next;
+			free(t);
+			break;
+		}
+		else if (strcmp(name, head->name) == 0)
+		{
+			t = n;
+			head = n->next;
+			free(t);
+			break;
+		}
+		n = n->next;
+	}
+	if (strcmp(name, n->name) == 0)
+	{
+		k++;
+		t = n;
+		n = n->next;
+		free(t);
+	}
+	return head;
+}
+struct student* add(struct student* head)
+{
+	struct student* n = head;
+	struct student* New = (struct student*)malloc(sizeof(struct student));
+	printf("请输入要加入的学生信息：");
+	scanf("%s", New->name);
+	scanf("%s", New->sex);
+	scanf("%d", &New->num);
+	scanf("%d", &New->score);
+	while (n->next != NULL)
+	{
+		n = n->next;
+	}
+	n->next = New;
+	New->next = NULL;
+	return head;
+}
+int main()
+{
+	manu();
+	int n = 0;
+	struct student* head = NULL;
+	printf("请输入你的指令 ：\n");
+	while (scanf("%d", &n) != EOF)
+	{
+		if (n == 1)
+		{
+			head = creat();
+		}
+		if (n == 2)
+		{
+			find(head);
+		}
+		if (n == 3)
+		{
+			change(head);
+		}
+		if (n == 4)
+		{
+			head=del(head);
+		}
+		if (n == 5)
+		{
+			print(head);
+		}
+		if (n == 6)
+		{
+			head=add(head);
+		}
+		if (n == 7)
+		{
+			break;
+		}
+		printf("是否需要继续进行操作：(0继续操作/1终止操作)\n");
+		int m;
+		scanf("%d", &m);
+		if (m == 1)
+		{
+			break;
+		}
+		printf("请输入你的指令 ：\n");
+	}
+}
